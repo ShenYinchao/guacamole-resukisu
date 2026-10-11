@@ -1,0 +1,39 @@
+name: Build guacamole ReSukiSU
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+    steps:
+      - name: Read build files
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev \
+            libncurses-dev libtinfo5 python-is-python3 rsync zip unzip cpio lz4 \
+            binutils-aarch64-linux-gnu binutils-arm-linux-gnueabi
+      - name: Build baseline, then ReSukiSU, and compare module ABI
+        shell: bash
+        run: bash scripts/build.sh
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: guacamole-build-diagnostics
+          path: diagnostics/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Upload candidate kernel
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: guacamole-23.2-20261005-ReSukiSU-candidate
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
