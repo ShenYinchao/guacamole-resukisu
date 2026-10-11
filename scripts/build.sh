@@ -43,7 +43,7 @@ cp "$kit_dir/config/original.config" out-baseline/.config
 make -C kernel O="$kit_dir/work-ci/out-baseline" "${make_args[@]}" olddefconfig
 python3 "$kit_dir/scripts/check_config.py" "$kit_dir/config/original.config" \
   out-baseline/.config baseline "$kit_dir/diagnostics/baseline-config-report.json"
-make -C kernel O="$kit_dir/work-ci/out-baseline" "${make_args[@]}" -j"$(nproc)" Image modules dtbs
+make -C kernel O="$kit_dir/work-ci/out-baseline" "${make_args[@]}" -j"$(nproc)" Image modules
 [[ "$(cat out-baseline/include/config/kernel.release)" == '4.14.357-openela-perf-g0521dc291cf1' ]]
 
 # Pin the last ReSukiSU commit before the upstream project renamed itself.
@@ -68,7 +68,7 @@ make -C kernel O="$kit_dir/work-ci/out-root" "${make_args[@]}" olddefconfig
 python3 "$kit_dir/scripts/check_config.py" "$kit_dir/config/original.config" \
   out-root/.config root "$kit_dir/diagnostics/root-config-report.json"
 grep -qx 'CONFIG_KSU_MANUAL_HOOK=y' out-root/.config
-make -C kernel O="$kit_dir/work-ci/out-root" "${make_args[@]}" -j"$(nproc)" Image modules dtbs
+make -C kernel O="$kit_dir/work-ci/out-root" "${make_args[@]}" -j"$(nproc)" Image modules
 [[ "$(cat out-root/include/config/kernel.release)" == '4.14.357-openela-perf-g0521dc291cf1' ]]
 python3 "$kit_dir/scripts/check_abi.py" out-baseline/Module.symvers \
   out-root/Module.symvers "$kit_dir/diagnostics/abi-report.json"
